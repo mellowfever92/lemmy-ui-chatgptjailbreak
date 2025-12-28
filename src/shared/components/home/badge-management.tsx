@@ -70,14 +70,15 @@ export class BadgeManagement extends Component<
     }
   }
 
-  async handleDeleteBadge(badgeId: number, i: BadgeManagement) {
+  async handleDeleteBadge(badgeId: number, event: Event) {
+    event.preventDefault();
     if (!confirm(I18NextService.i18n.t("confirm_delete_badge"))) return;
 
     const res = await HttpService.deleteBadge(badgeId);
 
     if (res.state === "success") {
       toast(I18NextService.i18n.t("badge_deleted"), "success");
-      await i.loadBadges();
+      await this.loadBadges();
     } else {
       toast(I18NextService.i18n.t("failed_to_delete_badge"), "danger");
     }
@@ -161,14 +162,12 @@ export class BadgeManagement extends Component<
                 className="form-control"
                 value={this.state.newBadge.image_url}
                 onInput={e => {
+                  this.handleInputChange("image_url", e.currentTarget.value);
+                }}
+                onBlur={e => {
                   const value = e.currentTarget.value;
-                  this.handleInputChange("image_url", value);
-
                   if (value && !this.validateImageUrl(value)) {
-                    toast(
-                      "Please enter a valid http:// or https:// URL",
-                      "warning",
-                    );
+                    toast(I18NextService.i18n.t("invalid_url"), "warning");
                   }
                 }}
                 required
@@ -289,6 +288,7 @@ export class BadgeManagement extends Component<
                       <button
                         className="btn btn-danger btn-sm"
                         onClick={linkEvent(badge.id, this.handleDeleteBadge)}
+                        aria-label={`${I18NextService.i18n.t("delete")} ${badge.name}`}
                       >
                         {I18NextService.i18n.t("delete")}
                       </button>

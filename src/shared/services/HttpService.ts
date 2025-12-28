@@ -111,7 +111,7 @@ export class HttpService {
   public static async listBadges(): Promise<RequestState<ListBadgesResponse>> {
     try {
       const response = await fetch(
-        `${getBackendHostExternal()}/api/v3/badge/list`,
+        `${getBackendHostExternal()}/api/v3/badge`,
         {
           method: "GET",
           headers: this.#getHeaders(),

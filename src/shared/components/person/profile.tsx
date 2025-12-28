@@ -100,7 +100,8 @@ import { HtmlTags } from "../common/html-tags";
 import { Icon, Spinner } from "../common/icon";
 import { MomentTime } from "../common/moment-time";
 import { PostSortSelect } from "../common/sort-select";
-import { UserBadges } from "../common/user-badges";
+import { BadgeAssignment } from "./badge-assignment";
+import { UserBadges } from "./user-badges";
 import { CommunityLink } from "../community/community-link";
 import { PersonDetails } from "./person-details";
 import { PersonListing } from "./person-listing";
@@ -970,16 +971,22 @@ export class Profile extends Component<ProfileRouteProps, ProfileState> {
                 {!this.amCurrentUser && this.isoData.myUserInfo && (
                   <>
                     {amAdmin(this.isoData.myUserInfo) && (
-                      <Link
-                        className={
-                          "d-flex align-self-start btn btn-secondary me-2"
-                        }
-                        to={`/modlog?userId=${pv.person.id}`}
-                      >
-                        {I18NextService.i18n.t("user_moderation_history", {
-                          user: pv.person.name,
-                        })}
-                      </Link>
+                      <>
+                        <Link
+                          className={
+                            "d-flex align-self-start btn btn-secondary me-2"
+                          }
+                          to={`/modlog?userId=${pv.person.id}`}
+                        >
+                          {I18NextService.i18n.t("user_moderation_history", {
+                            user: pv.person.name,
+                          })}
+                        </Link>
+                        <BadgeAssignment
+                          personId={pv.person.id}
+                          personName={pv.person.name}
+                        />
+                      </>
                     )}
                     {pv.person.matrix_user_id && (
                       <a

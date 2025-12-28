@@ -45,6 +45,7 @@ import { EmojiForm } from "./emojis-form";
 import RateLimitForm from "./rate-limit-form";
 import { SiteForm } from "./site-form";
 import { TaglineForm } from "./tagline-form";
+import { BadgeManagement } from "./badge-management";
 import { getHttpBaseInternal } from "../../utils/env";
 import { RouteComponentProps } from "inferno-router/dist/Route";
 import { IRoutePropsWithFetch } from "@utils/routes";
@@ -356,6 +357,21 @@ export class AdminSettings extends Component<
                     onDelete={this.handleDeleteOAuthProvider}
                     onEdit={this.handleEditOAuthProvider}
                   />
+                </div>
+              ),
+            },
+            {
+              key: "badges",
+              label: I18NextService.i18n.t("badges"),
+              getNode: isSelected => (
+                <div
+                  className={classNames("tab-pane", {
+                    active: isSelected,
+                  })}
+                  role="tabpanel"
+                  id="badges-tab-pane"
+                >
+                  <BadgeManagement />
                 </div>
               ),
             },

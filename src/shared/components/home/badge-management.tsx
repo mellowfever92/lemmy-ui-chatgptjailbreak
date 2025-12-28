@@ -253,18 +253,40 @@ export class BadgeManagement extends Component<
                 {this.state.badges.map(badge => (
                   <div key={badge.id} className="card mb-2">
                     <div className="card-body d-flex align-items-center">
-                      <img
-                        src={badge.image_url}
-                        alt={badge.name}
-                        width={40}
-                        height={40}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                        onError={e => {
-                          e.currentTarget.style.display = "none";
-                        }}
-                      />
+                      {badge.image_url ? (
+                        <img
+                          src={badge.image_url}
+                          alt={badge.name}
+                          width={40}
+                          height={40}
+                          style={{
+                            objectFit: "contain",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                            padding: "2px",
+                            backgroundColor: "#fff",
+                          }}
+                          onError={e => {
+                            console.error(`Failed to load badge image: ${badge.image_url}`);
+                            e.currentTarget.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23ddd'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23666'%3E?%3C/text%3E%3C/svg%3E";
+                          }}
+                        />
+                      ) : (
+                        <div 
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                            border: "1px solid #ddd",
+                            borderRadius: "4px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            backgroundColor: "#f0f0f0",
+                          }}
+                        >
+                          ?
+                        </div>
+                      )}
                       <div className="ms-3 flex-grow-1">
                         <h5 className="mb-1">{badge.name}</h5>
                         {badge.description && (

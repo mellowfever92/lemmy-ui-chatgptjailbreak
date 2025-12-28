@@ -14,6 +14,7 @@ import {
   AdminSettings,
   AdminSettingsFetchConfig,
 } from "@components/home/admin-settings";
+import { BadgeManagement } from "@components/home/badge-management";
 import {
   Home,
   HomeFetchConfig,
@@ -247,6 +248,10 @@ export const routes: IRoutePropsWithFetch<RouteData, any, any>[] = [
     component: AdminSettings,
     fetchInitialData: AdminSettings.fetchInitialData,
   } as AdminSettingsFetchConfig,
+  {
+    path: `/admin/badges`,
+    component: BadgeManagement,
+  },
   {
     path: `/reports`,
     component: Reports,

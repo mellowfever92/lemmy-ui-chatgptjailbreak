@@ -12,7 +12,10 @@ interface BadgeManagementState {
   newBadge: CreateBadge;
 }
 
-export class BadgeManagement extends Component<{}, BadgeManagementState> {
+export class BadgeManagement extends Component<
+  Record<string, never>,
+  BadgeManagementState
+> {
   state: BadgeManagementState = {
     badges: [],
     loading: true,
@@ -33,7 +36,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
   async loadBadges() {
     this.setState({ loading: true });
     const res = await HttpService.listBadges();
-    
+
     if (res.state === "success") {
       this.setState({ badges: res.data.badges, loading: false });
     } else {
@@ -45,9 +48,9 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
   async handleCreateBadge(i: BadgeManagement, event: Event) {
     event.preventDefault();
     i.setState({ creating: true });
-    
+
     const res = await HttpService.createBadge(i.state.newBadge);
-    
+
     if (res.state === "success") {
       toast(I18NextService.i18n.t("badge_created"), "success");
       await i.loadBadges();
@@ -69,9 +72,9 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
 
   async handleDeleteBadge(badgeId: number, i: BadgeManagement) {
     if (!confirm(I18NextService.i18n.t("confirm_delete_badge"))) return;
-    
+
     const res = await HttpService.deleteBadge(badgeId);
-    
+
     if (res.state === "success") {
       toast(I18NextService.i18n.t("badge_deleted"), "success");
       await i.loadBadges();
@@ -88,7 +91,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
 
   validateImageUrl(url: string): boolean {
     if (!url || url.trim() === "") return false;
-    
+
     try {
       const parsed = new URL(url);
       return parsed.protocol === "http:" || parsed.protocol === "https:";
@@ -117,7 +120,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
         >
           <div className="card-body">
             <h3>{I18NextService.i18n.t("create_new_badge")}</h3>
-            
+
             <div className="mb-3">
               <label className="form-label">
                 {I18NextService.i18n.t("name")}
@@ -160,28 +163,32 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
                 onInput={e => {
                   const value = e.currentTarget.value;
                   this.handleInputChange("image_url", value);
-                  
+
                   if (value && !this.validateImageUrl(value)) {
-                    toast("Please enter a valid http:// or https:// URL", "warning");
+                    toast(
+                      "Please enter a valid http:// or https:// URL",
+                      "warning",
+                    );
                   }
                 }}
                 required
                 placeholder="https://example.com/badge.png"
               />
-              {this.state.newBadge.image_url && this.validateImageUrl(this.state.newBadge.image_url) && (
-                <div className="mt-2">
-                  <img
-                    src={this.state.newBadge.image_url}
-                    alt="Preview"
-                    width={40}
-                    height={40}
-                    style={{ objectFit: "contain" }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
-                </div>
-              )}
+              {this.state.newBadge.image_url &&
+                this.validateImageUrl(this.state.newBadge.image_url) && (
+                  <div className="mt-2">
+                    <img
+                      src={this.state.newBadge.image_url}
+                      alt="Preview"
+                      width={40}
+                      height={40}
+                      style={{ objectFit: "contain" }}
+                      onError={e => {
+                        e.currentTarget.style.display = "none";
+                      }}
+                    />
+                  </div>
+                )}
             </div>
 
             <div className="mb-3 form-check">
@@ -255,7 +262,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
                         style={{
                           objectFit: "contain",
                         }}
-                        onError={(e) => {
+                        onError={e => {
                           e.currentTarget.style.display = "none";
                         }}
                       />

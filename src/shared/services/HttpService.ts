@@ -10,6 +10,7 @@ import type {
   RemoveBadge,
   BadgeActionResponse,
 } from "@utils/types";
+import { UserService } from "./UserService";
 
 export const EMPTY_REQUEST = {
   state: "empty",
@@ -113,9 +114,14 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge/list`,
         {
           method: "GET",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -131,10 +137,15 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge`,
         {
           method: "POST",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
           body: JSON.stringify(form),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -150,10 +161,15 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge`,
         {
           method: "PUT",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
           body: JSON.stringify(form),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -169,10 +185,15 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge`,
         {
           method: "DELETE",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
           body: JSON.stringify({ id: badge_id }),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -189,10 +210,15 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge/assign`,
         {
           method: "POST",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
           body: JSON.stringify({ person_id, badge_id }),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -209,10 +235,15 @@ export class HttpService {
         `${getBackendHostExternal()}/api/v3/badge/remove`,
         {
           method: "POST",
-          headers: this.#Instance.#getHeaders(),
+          headers: this.#getHeaders(),
           body: JSON.stringify({ person_id, badge_id }),
         },
       );
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
       const data = await response.json();
       return { state: "success", data };
     } catch (err) {
@@ -220,9 +251,16 @@ export class HttpService {
     }
   }
 
-  #getHeaders(): HeadersInit {
-    return {
+  static #getHeaders(): HeadersInit {
+    const headers: HeadersInit = {
       "Content-Type": "application/json",
     };
+    
+    const auth = UserService.Instance.auth();
+    if (auth) {
+      headers["Authorization"] = `Bearer ${auth}`;
+    }
+    
+    return headers;
   }
 }

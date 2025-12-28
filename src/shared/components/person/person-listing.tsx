@@ -77,9 +77,14 @@ export function PersonListing({
             <img
               key={badge.id}
               src={badge.image_url}
-              alt={badge.name}
+              alt={badge.name ? `Badge: ${badge.name}` : "Badge"}
               title={badge.description || badge.name}
               className="person-badge"
+              width={20}
+              height={20}
+              onError={e => {
+                e.currentTarget.style.display = "none";
+              }}
             />
           ))}
         </span>

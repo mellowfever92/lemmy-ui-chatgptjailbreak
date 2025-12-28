@@ -67,7 +67,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
     }
   }
 
-  async handleDeleteBadge(i: BadgeManagement, badgeId: number) {
+  async handleDeleteBadge(badgeId: number, i: BadgeManagement) {
     if (!confirm(I18NextService.i18n.t("confirm_delete_badge"))) return;
     
     const res = await HttpService.deleteBadge(badgeId);
@@ -84,6 +84,17 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
     this.setState({
       newBadge: { ...this.state.newBadge, [field]: value },
     });
+  }
+
+  validateImageUrl(url: string): boolean {
+    if (!url || url.trim() === "") return false;
+    
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch {
+      return false;
+    }
   }
 
   render() {
@@ -146,18 +157,25 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
                 type="url"
                 className="form-control"
                 value={this.state.newBadge.image_url}
-                onInput={e =>
-                  this.handleInputChange("image_url", e.currentTarget.value)
-                }
+                onInput={e => {
+                  const value = e.currentTarget.value;
+                  this.handleInputChange("image_url", value);
+                  
+                  if (value && !this.validateImageUrl(value)) {
+                    toast("Please enter a valid http:// or https:// URL", "warning");
+                  }
+                }}
                 required
                 placeholder="https://example.com/badge.png"
               />
-              {this.state.newBadge.image_url && (
+              {this.state.newBadge.image_url && this.validateImageUrl(this.state.newBadge.image_url) && (
                 <div className="mt-2">
                   <img
                     src={this.state.newBadge.image_url}
                     alt="Preview"
-                    style={{ width: "40px", height: "40px" }}
+                    width={40}
+                    height={40}
+                    style={{ objectFit: "contain" }}
                     onError={(e) => {
                       e.currentTarget.style.display = "none";
                     }}
@@ -232,10 +250,13 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
                       <img
                         src={badge.image_url}
                         alt={badge.name}
+                        width={40}
+                        height={40}
                         style={{
-                          width: "40px",
-                          height: "40px",
                           objectFit: "contain",
+                        }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = "none";
                         }}
                       />
                       <div className="ms-3 flex-grow-1">
@@ -260,7 +281,7 @@ export class BadgeManagement extends Component<{}, BadgeManagementState> {
                       </div>
                       <button
                         className="btn btn-danger btn-sm"
-                        onClick={() => this.handleDeleteBadge(this, badge.id)}
+                        onClick={linkEvent(badge.id, this.handleDeleteBadge)}
                       >
                         {I18NextService.i18n.t("delete")}
                       </button>

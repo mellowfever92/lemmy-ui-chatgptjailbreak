@@ -33,7 +33,7 @@ export class BadgeManagement extends Component<
     await this.loadBadges();
   }
 
-  async loadBadges() {
+  loadBadges = async () => {
     this.setState({ loading: true });
     const res = await HttpService.listBadges();
 
@@ -68,9 +68,9 @@ export class BadgeManagement extends Component<
       toast(I18NextService.i18n.t("failed_to_create_badge"), "danger");
       i.setState({ creating: false });
     }
-  }
+  };
 
-  async handleDeleteBadge(badgeId: number, event: Event) {
+  handleDeleteBadge = async (badgeId: number, event: Event) => {
     event.preventDefault();
     if (!confirm(I18NextService.i18n.t("confirm_delete_badge"))) return;
 
@@ -82,15 +82,15 @@ export class BadgeManagement extends Component<
     } else {
       toast(I18NextService.i18n.t("failed_to_delete_badge"), "danger");
     }
-  }
+  };
 
-  handleInputChange(field: keyof CreateBadge, value: string | boolean) {
+  handleInputChange = (field: keyof CreateBadge, value: string | boolean) => {
     this.setState({
       newBadge: { ...this.state.newBadge, [field]: value },
     });
-  }
+  };
 
-  validateImageUrl(url: string): boolean {
+  validateImageUrl = (url: string): boolean => {
     if (!url || url.trim() === "") return false;
 
     try {
@@ -99,7 +99,7 @@ export class BadgeManagement extends Component<
     } catch {
       return false;
     }
-  }
+  };
 
   render() {
     if (this.state.loading) {
